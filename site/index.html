@@ -1,0 +1,856 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Afterhours</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0b0a0f; --panel:#15131c; --panel2:#1d1a27; --line:#2a2636;
+  --text:#f1eef7; --muted:#9a94ab; --dim:#6b6579;
+  --accent:#ff4fa3; --accent2:#ffb547; --ok:#5ee6a8; --warn:#ffb547;
+  --radius:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 Inter,system-ui,sans-serif}
+body{background:radial-gradient(1200px 500px at 85% -10%,#3a1030 0%,transparent 60%),radial-gradient(900px 400px at -10% 10%,#2a1a05 0%,transparent 55%),var(--bg);min-height:100vh}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px 80px}
+header{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:22px 0 18px;flex-wrap:wrap}
+.logo{font:700 24px 'Space Grotesk',sans-serif;letter-spacing:-.5px;display:flex;align-items:center;gap:10px}
+.logo i{width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 18px var(--accent);display:inline-block;animation:pulse 2s infinite}
+@keyframes pulse{50%{opacity:.4}}
+nav{display:flex;gap:4px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:4px}
+nav button{background:none;border:0;padding:8px 16px;border-radius:999px;color:var(--muted);font-weight:500;white-space:nowrap}
+nav button.on{background:var(--text);color:var(--bg)}
+nav .ct{font-size:11px;background:var(--accent);color:#fff;border-radius:999px;padding:1px 6px;margin-left:5px}
+section{display:none} section.on{display:block}
+h1{font:700 clamp(30px,6vw,48px)/1.05 'Space Grotesk',sans-serif;letter-spacing:-1.5px;margin:28px 0 10px}
+h1 em{font-style:normal;background:linear-gradient(90deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2{font:700 20px 'Space Grotesk',sans-serif;margin:28px 0 12px}
+.sub{color:var(--muted);margin:0 0 22px;max-width:560px}
+.paste{display:flex;gap:8px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:8px}
+.paste input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--text);font:inherit;padding:10px 12px}
+.btn{background:var(--accent);border:0;border-radius:10px;padding:10px 18px;font-weight:600;color:#fff;white-space:nowrap}
+.btn:disabled{opacity:.5;cursor:wait}
+.btn.ghost{background:var(--panel2);border:1px solid var(--line);color:var(--text);font-weight:500}
+.btn.sm{padding:6px 12px;font-size:13px;border-radius:8px}
+.hint{color:var(--dim);font-size:13px;margin-top:10px}
+.hint button{background:none;border:0;color:var(--muted);text-decoration:underline;padding:0;font-size:13px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.setcard{display:flex;gap:16px;align-items:center;margin-top:26px}
+.setcard img{width:150px;aspect-ratio:16/9;object-fit:cover;border-radius:10px;background:var(--panel2);flex-shrink:0}
+.setcard .t{font:700 18px/1.25 'Space Grotesk',sans-serif}
+.meta{color:var(--muted);font-size:13px;display:flex;gap:12px;flex-wrap:wrap;margin-top:4px}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;padding:3px 9px;border-radius:999px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+.badge.ok{color:var(--ok);border-color:#1f4a38}
+.badge.warn{color:var(--warn);border-color:#4a3a1f}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 6px;align-items:center}
+.toolbar .sp{flex:1}
+.tracks{margin-top:8px}
+.tr{display:grid;grid-template-columns:28px 52px 44px 1fr auto;gap:12px;align-items:center;padding:10px 8px;border-bottom:1px solid var(--line)}
+.tr:hover{background:#ffffff05}
+.tr .n{color:var(--dim);font-size:12px;text-align:right}
+.tr .tm{color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums}
+.tr .tm a{text-decoration:none} .tr .tm a:hover{color:var(--accent)}
+.cov{width:44px;height:44px;border-radius:6px;background:var(--panel2);position:relative;overflow:hidden;border:0;padding:0}
+.cov img{width:100%;height:100%;object-fit:cover;display:block}
+.cov .pl{position:absolute;inset:0;display:grid;place-items:center;background:#0008;opacity:0;transition:.15s;font-size:16px}
+.cov:hover .pl,.cov.playing .pl{opacity:1}
+.cov.playing{outline:2px solid var(--accent)}
+.cov[disabled]{cursor:default}
+.ttl{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.art{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.art button{background:none;border:0;padding:0;color:inherit;font-size:13px}
+.art button:hover{color:var(--text);text-decoration:underline}
+.art button.f{color:var(--accent)}
+.tr.id .ttl{color:var(--dim);font-style:italic}
+.links{display:flex;gap:6px}
+.links a{font-size:11px;font-weight:600;text-decoration:none;padding:4px 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--muted)}
+.links a:hover{color:var(--text);border-color:var(--dim)}
+.links a.sp{color:#1ed760} .links a.bp{color:#a3ff12}
+.empty{text-align:center;color:var(--muted);padding:40px 16px}
+.empty b{display:block;color:var(--text);font:700 18px 'Space Grotesk',sans-serif;margin-bottom:6px}
+.steps{margin-top:26px} .step{display:flex;gap:10px;align-items:center;color:var(--dim);padding:5px 0;font-size:14px}
+.step.on{color:var(--text)} .step.done{color:var(--ok)}
+.dot{width:8px;height:8px;border-radius:50%;background:currentColor}
+.step.on .dot{animation:pulse .8s infinite}
+.err{margin-top:20px;border-color:#5a2030;color:#ff9db5}
+.fp{margin-top:14px;text-align:left}
+.fp .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.fp select{background:var(--panel2);border:1px solid var(--line);color:var(--text);border-radius:8px;padding:6px 10px;font:inherit;font-size:13px}
+.prog{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden;margin:12px 0 6px}
+.prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .4s}
+.fp .stat{font-size:13px;color:var(--muted)}
+.tag{font:500 10px Inter;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:1px 7px;margin-left:7px;vertical-align:2px}
+.tag.un{color:var(--accent2);border-color:#4a3a1f}
+.mash{font-size:12px;color:var(--dim);margin-top:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.links button.ver{font-size:11px;font-weight:600;padding:4px 7px;border-radius:6px;background:#ff4fa31a;border:1px solid #ff4fa355;color:var(--accent)}
+.links button.ver:hover{background:#ff4fa333}
+.vp{margin:0 8px 10px 112px;padding:14px 16px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+.vp .vh{font:700 16px 'Space Grotesk',sans-serif}
+.vp .vh.match,.vp .vh.original{color:var(--ok)} .vp .vh.partial,.vp .vh.unreleased,.vp .vh.notfound{color:var(--warn)} .vp .vh.close{color:var(--accent2)}
+.vp .vd{color:var(--muted);font-size:13px;margin-top:2px}
+.vc{display:grid;grid-template-columns:1fr 90px auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:13px}
+.vc:first-of-type{margin-top:10px}
+.vc .vt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.vc .vt small{color:var(--dim);margin-left:6px}
+.vc .vb{height:6px;background:var(--panel2);border-radius:3px;overflow:hidden}
+.vc .vb i{display:block;height:100%;background:var(--accent)}
+.vc.top .vb i{background:var(--ok)}
+.vc .va{display:flex;gap:6px}
+.vc .va a,.vc .va button{font-size:11px;font-weight:600;padding:3px 7px;border-radius:6px;background:var(--panel2);border:1px solid var(--line);color:var(--muted);text-decoration:none}
+@media (max-width:640px){.vp{margin-left:0}.vc{grid-template-columns:1fr auto}.vc .vb{display:none}}
+.sets{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;margin-top:8px}
+.sc{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:.15s;text-align:left;padding:0;color:inherit}
+.sc:hover{border-color:var(--dim);transform:translateY(-2px)}
+.sc img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:var(--panel2)}
+.sc .b{padding:10px 12px 12px}
+.sc .t{font-weight:600;font-size:14px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sc .m{font-size:12px;color:var(--muted);margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sc .m .badge{font-size:11px;padding:1px 7px}
+.ch-row{display:grid;grid-template-columns:28px 44px 1fr auto;gap:12px;align-items:center;padding:9px 8px;border-bottom:1px solid var(--line)}
+.ch-row .n{color:var(--dim);font:700 15px 'Space Grotesk';text-align:right}
+.ch-row .plays{font-size:12px;color:var(--accent);font-weight:600;white-space:nowrap}
+.ch-row .in{font-size:12px;color:var(--dim);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ch-row .in button{background:none;border:0;color:var(--muted);padding:0;font-size:12px;text-decoration:underline}
+.ch-grid{display:grid;grid-template-columns:2fr 1fr;gap:28px}
+@media (max-width:760px){.ch-grid{grid-template-columns:1fr}}
+.art-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--line);font-size:14px}
+.art-row button{font-size:12px}
+.conf-community .ttl::after{content:"named in comments";font:500 10px Inter;color:#7cc4ff;border:1px solid #1f3a4a;border-radius:999px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+#ansNote{font-size:12px;color:var(--muted)}
+.conf-filled .ttl::after{content:"from audio";font:500 10px Inter;color:var(--ok);border:1px solid #1f4a38;border-radius:999px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+.conf-medium .ttl::after{content:"heard once";font:500 10px Inter;color:var(--warn);border:1px solid #4a3a1f;border-radius:999px;padding:1px 6px;margin-left:8px;vertical-align:2px}
+.locbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.locbar input,.locbar select{background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:10px;padding:9px 12px;font:inherit}
+.locbar input{flex:1;min-width:160px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:7px 12px;border-radius:999px;background:var(--panel);border:1px solid var(--line);color:var(--muted);font-size:13px}
+.chip.on{border-color:var(--accent);color:var(--text);background:#ff4fa31a}
+.geo-results{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.month{font:700 13px 'Space Grotesk',sans-serif;text-transform:uppercase;letter-spacing:1.5px;color:var(--dim);margin:24px 0 8px}
+.ev{display:grid;grid-template-columns:60px 1fr auto;gap:14px;align-items:center;padding:12px;border-radius:12px;border:1px solid transparent}
+.ev:hover{background:var(--panel)}
+.ev.hot{border-color:#ff4fa355;background:#ff4fa30d}
+.date{text-align:center;background:var(--panel2);border-radius:10px;padding:6px 0;border:1px solid var(--line)}
+.date .d{font:700 22px/1 'Space Grotesk',sans-serif}
+.date .w{font-size:11px;color:var(--muted);text-transform:uppercase}
+.ev .nm{font-weight:600}
+.ev .lineup{font-size:13px;color:var(--muted)}
+.ev .lineup b{color:var(--accent);font-weight:600}
+.ev .vn{font-size:12px;color:var(--dim);margin-top:2px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.ac{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:12px;text-align:center;position:relative}
+.ac img,.ac .ph{width:96px;height:96px;border-radius:50%;object-fit:cover;background:var(--panel2);display:block;margin:4px auto 10px}
+.ac .ph{display:grid;place-items:center;font:700 30px 'Space Grotesk';color:var(--dim)}
+.ac .nm{font-weight:600;font-size:14px}
+.ac .sm{font-size:12px;color:var(--muted)}
+.ac .x{position:absolute;top:6px;right:8px;background:none;border:0;color:var(--dim);font-size:16px}
+.ac .x:hover{color:var(--text)}
+.ac.sugg{opacity:.85}
+.crate{display:flex;gap:14px;align-items:center;padding:10px;border-radius:12px;cursor:pointer}
+.crate:hover{background:var(--panel)}
+.crate img{width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:8px;background:var(--panel2)}
+.keybox code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:13px}
+.keybox ol{color:var(--muted);padding-left:20px} .keybox li{margin:6px 0}
+.player{position:fixed;left:50%;bottom:16px;transform:translateX(-50%);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:8px 16px 8px 8px;display:none;align-items:center;gap:10px;box-shadow:0 10px 40px #000a;max-width:calc(100% - 32px);z-index:5}
+.player.on{display:flex}
+.player img{width:36px;height:36px;border-radius:50%}
+.player .tx{font-size:13px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.player .bar{height:3px;background:var(--line);border-radius:2px;margin-top:4px;overflow:hidden}
+.player .bar i{display:block;height:100%;background:var(--accent);width:0}
+.toast{position:fixed;top:16px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px;opacity:0;transition:.2s;pointer-events:none;z-index:9}
+.toast.on{opacity:1}
+@media (max-width:640px){
+  nav{width:100%;justify-content:space-between} nav button{padding:8px 9px;font-size:13px}
+  .tr{grid-template-columns:44px 1fr auto;gap:10px}
+  .tr .n,.tr .tm{display:none}
+  .links a:not(.sp){display:none}
+  .setcard img{width:100px}
+  .ev{grid-template-columns:52px 1fr} .ev .go{display:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <div class="logo"><i></i>afterhours</div>
+  <nav id="nav">
+    <button data-tab="fresh" class="on">Fresh</button>
+    <button data-tab="identify">Track ID</button>
+    <button data-tab="charts">Charts</button>
+    <button data-tab="shows" id="showsTab">Shows</button>
+    <button data-tab="artists">Artists<span class="ct" id="artistCt" hidden></span></button>
+    <button data-tab="crates">Crates</button>
+  </nav>
+</header>
+
+<!-- FRESH -->
+<section id="fresh" class="on">
+  <h1>Fresh <em>sets</em></h1>
+  <p class="sub" id="freshSub">New house sets from the channels that matter, tracklisted automatically from descriptions, comments, and the IDs people name in the replies.</p>
+  <div class="toolbar" id="freshFilters"></div>
+  <div id="freshOut"><div class="steps"><div class="step on"><span class="dot"></span>Loading the feed</div></div></div>
+</section>
+
+<!-- CHARTS -->
+<section id="charts">
+  <h1>What's getting <em>played</em></h1>
+  <p class="sub" id="chartsSub">Built from every tracklist in the feed.</p>
+  <div id="chartsOut"></div>
+</section>
+
+<!-- TRACK ID -->
+<section id="identify">
+  <h1>Heard something <em>in a set?</em></h1>
+  <p class="sub" id="idSub">Paste a link to any YouTube, SoundCloud, or Mixcloud set. Afterhours finds the tracklist, matches every song, and lets you follow the artists.</p>
+  <form class="paste" id="pasteForm">
+    <input id="setUrl" type="url" placeholder="https://www.youtube.com/watch?v=..." required autocomplete="off">
+    <button class="btn" id="goBtn">Find tracks</button>
+  </form>
+  <div class="hint">Try one: <button data-ex="https://www.youtube.com/watch?v=pRnr9hRooAM">Kaytranada at Elevator Music</button> · <button data-ex="https://www.youtube.com/watch?v=qDAgkOuijUg">Jazz house sunset mix</button></div>
+  <div id="result"></div>
+</section>
+
+<!-- SHOWS -->
+<section id="shows">
+  <h1>Shows <em>near you</em></h1>
+  <p class="sub">House and electronic events around you. Anything with an artist you follow gets lit up.</p>
+  <div class="locbar">
+    <input id="cityIn" placeholder="City (e.g. Chicago)">
+    <button class="btn ghost" id="cityBtn">Search</button>
+    <button class="btn ghost" id="geoBtn">Use my location</button>
+    <select id="radius"><option value="25">25 mi</option><option value="60" selected>60 mi</option><option value="120">120 mi</option><option value="250">250 mi</option></select>
+  </div>
+  <div class="geo-results" id="geoResults"></div>
+  <div class="toolbar">
+    <span class="badge" id="locLabel">No location set</span>
+    <span class="sp"></span>
+    <button class="chip" id="onlyMine">Only my artists</button>
+    <button class="chip" id="onlyFest">Festivals</button>
+  </div>
+  <div id="eventsOut"></div>
+</section>
+
+<!-- ARTISTS -->
+<section id="artists">
+  <h1>Your <em>artists</em></h1>
+  <p class="sub">Follow artists straight from a tracklist. Their shows near you show up first.</p>
+  <form class="paste" id="addArtistForm" style="max-width:480px">
+    <input id="artistIn" placeholder="Add an artist by name" autocomplete="off">
+    <button class="btn">Follow</button>
+  </form>
+  <div id="artistsOut"></div>
+</section>
+
+<!-- CRATES -->
+<section id="crates">
+  <h1>Your <em>crates</em></h1>
+  <p class="sub">Every set you save, with its tracklist ready to dig back into.</p>
+  <div id="cratesOut"></div>
+</section>
+</div>
+
+<div class="player" id="player"><img id="pImg" alt=""><div style="min-width:0"><div class="tx" id="pTx"></div><div class="bar"><i id="pBar"></i></div></div><button class="btn sm ghost" id="pStop">Stop</button></div>
+<div class="toast" id="toast"></div>
+<audio id="audio"></audio>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+// ---------- storage (local only) ----------
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("ah-"+k); return v ? JSON.parse(v) : d; }catch{ return d; } },
+  set(k, v){ try{ localStorage.setItem("ah-"+k, JSON.stringify(v)); }catch{} }
+};
+let followed = store.get("artists", []);   // [{name, picture}]
+let crates = store.get("crates", []);      // [{url, title, thumbnail, uploader, count, savedAt}]
+let loc = store.get("loc", null);          // {name, lat, lon}
+let current = null;                        // last identified set response
+let currentMatches = [];
+
+const norm = s => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+const isFollowed = n => followed.some(a => norm(a.name) === norm(n));
+function splitArtists(s){
+  return s.split(/\s*(?:,|&|\bfeat\.?|\bft\.?|\bvs\.?|\bx\b|\band\b)\s*/i).map(x => x.trim()).filter(x => x.length > 1);
+}
+function toast(msg){ const t = $("#toast"); t.textContent = msg; t.classList.add("on"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("on"), 1800); }
+function saveFollowed(){ store.set("artists", followed); const c = $("#artistCt"); c.hidden = !followed.length; c.textContent = followed.length; }
+
+async function api(path, opts){
+  const r = await fetch(path, opts);
+  const j = await r.json().catch(() => ({error: "Bad response from server"}));
+  if (!r.ok) throw new Error(j.error || r.statusText);
+  return j;
+}
+const post = (path, body) => api(path, {method:"POST", headers:{"Content-Type":"application/json"}, body: JSON.stringify(body)});
+
+// ---------- tabs ----------
+function show(tab){
+  document.querySelectorAll("nav button").forEach(b => b.classList.toggle("on", b.dataset.tab === tab));
+  document.querySelectorAll("section").forEach(s => s.classList.toggle("on", s.id === tab));
+  if (tab === "artists") renderArtists();
+  if (tab === "crates") renderCrates();
+  if (tab === "fresh") loadFeed();
+  if (tab === "charts") loadCharts();
+  if (tab === "shows" && loc && !eventsCache) loadEvents();
+  store.set("tab", tab);
+}
+$("#nav").onclick = e => { const b = e.target.closest("button"); if (b) show(b.dataset.tab); };
+
+// ---------- follow ----------
+async function follow(name){
+  if (isFollowed(name)) {
+    followed = followed.filter(a => norm(a.name) !== norm(name));
+    saveFollowed(); toast(`Unfollowed ${name}`);
+  } else {
+    followed.push({name, picture: null});
+    saveFollowed(); toast(`Following ${name}`);
+    api("/api/artist?q=" + encodeURIComponent(name)).then(a => {
+      const f = followed.find(x => norm(x.name) === norm(name));
+      if (f && a && a.picture) { f.picture = a.picture; f.fans = a.fans; saveFollowed(); if ($("#artists").classList.contains("on")) renderArtists(); }
+    }).catch(() => {});
+  }
+  if (current) renderTracks();
+  if (eventsCache) renderEvents();
+}
+
+// ---------- TRACK ID ----------
+document.querySelectorAll("[data-ex]").forEach(b => b.onclick = () => { $("#setUrl").value = b.dataset.ex; identify(b.dataset.ex); });
+$("#pasteForm").onsubmit = e => { e.preventDefault(); identify($("#setUrl").value.trim()); };
+
+const STEPS = ["Reading the set", "Checking chapters and description", "Digging through comments if needed", "Matching songs"];
+function renderSteps(i){
+  $("#result").innerHTML = `<div class="steps">${STEPS.map((s, k) => `<div class="step ${k < i ? "done" : k === i ? "on" : ""}"><span class="dot"></span>${s}</div>`).join("")}</div>`;
+}
+
+async function identify(url){
+  if (!url) return;
+  $("#goBtn").disabled = true;
+  let step = 0; renderSteps(0);
+  const timer = setInterval(() => { if (step < 2) renderSteps(++step); }, 2500);
+  try {
+    current = await post("/api/set", {url});
+    clearInterval(timer);
+    currentMatches = [];
+    renderSteps(3);
+    renderSet();
+    if (current.tracks.length) {
+      const m = await post("/api/match", {tracks: current.tracks});
+      currentMatches = m.matches;
+      renderTracks();
+      askComments();
+    }
+  } catch (e) {
+    clearInterval(timer);
+    $("#result").innerHTML = `<div class="card err">Could not read that link. ${esc(e.message)}</div>`;
+  } finally {
+    $("#goBtn").disabled = false;
+  }
+}
+
+const SOURCE_LABEL = {chapters: "Found in video chapters", description: "Found in the description", comments: "Found in the top comments", fingerprint: "Identified from the audio", answers: "Named in the comments"};
+let fpProvider = null, audioOn = true;
+api("/api/status").then(st => { fpProvider = st.fingerprint; audioOn = st.audio !== false;
+  if (st.shows === false) { $("#showsTab").hidden = true; if ($("#shows").classList.contains("on")) show("fresh"); }
+  if (st.public_mode) $("#idSub").textContent = "Paste a link to any YouTube set. Afterhours finds the tracklist, fills IDs people named in the comments, matches every song, and lets you follow the artists."; if (current) renderSet(); }).catch(() => {});
+const idSlots = () => current.tracks.filter(t => t.is_id && t.seconds != null).length;
+
+function renderSet(){
+  const s = current.set, n = current.tracks.length;
+  const saved = crates.some(c => c.url === s.url);
+  let html = `<div class="card setcard">
+    ${s.thumbnail ? `<img src="${esc(s.thumbnail)}" alt="">` : ""}
+    <div style="min-width:0">
+      <div class="t">${esc(s.title)}</div>
+      <div class="meta"><span>${esc(s.uploader || "")}</span>${s.duration_ts ? `<span>${s.duration_ts}</span>` : ""}<span>${esc(s.platform || "")}</span></div>
+      <div class="meta" style="margin-top:8px">
+        ${n ? `<span class="badge ok">${current.identified} of ${n} tracks identified</span><span class="badge">${SOURCE_LABEL[current.source] || ""}</span>` : `<span class="badge warn">No tracklist found yet</span>`}
+      </div>
+    </div></div>`;
+  if (n) {
+    html += `<div class="toolbar">
+      <button class="btn sm" id="saveCrate">${saved ? "Saved to crates" : "Save to crates"}</button>
+      <button class="btn sm ghost" id="followAll">Follow all artists</button>
+      ${audioOn && idSlots() && current.source !== "fingerprint" ? `<button class="btn sm ghost" id="fillBtn">Fingerprint the ${idSlots()} ID${idSlots() > 1 ? "s" : ""}</button>` : ""}
+      <span id="ansNote"></span>
+      <span class="sp"></span>
+      <button class="btn sm ghost" id="swapBtn" title="Use this if artists and titles look reversed">Swap artist / title</button>
+      <button class="btn sm ghost" id="copyBtn">Copy tracklist</button>
+    </div><div id="fp"></div><div class="tracks" id="tracks"></div>`;
+  } else {
+    const q = encodeURIComponent(s.title || "");
+    html += `<div class="card empty" style="margin-top:14px"><b>Nobody has posted this tracklist yet</b>
+      Checked the chapters, description${s.platform === "Youtube" ? ", and top comments" : ""}. ${esc(current.note || "")}<br><br>
+      ${current.links_1001.map(l => `<a class="btn" href="${esc(l)}" target="_blank" rel="noopener">Open the 1001Tracklists page</a> `).join("")}
+      <a class="btn ghost" href="https://www.1001tracklists.com/search/result.php?main_search=${q}" target="_blank" rel="noopener">Search 1001Tracklists</a>
+    </div><div id="fp"></div>`;
+  }
+  $("#result").innerHTML = html;
+  if (!n) return audioOn ? fpPanel("scan") : undefined;
+  if ($("#fillBtn")) $("#fillBtn").onclick = () => fpPanel("fill");
+  renderTracks();
+  $("#saveCrate").onclick = saveCurrent;
+  $("#followAll").onclick = () => {
+    const names = [...new Set(current.tracks.filter(t => !t.is_id).flatMap(t => splitArtists(t.artist)))];
+    names.filter(nm => !isFollowed(nm)).forEach(nm => follow(nm));
+    toast(`Following ${names.length} artists`);
+  };
+  $("#swapBtn").onclick = async () => {
+    current.tracks.forEach(t => [t.artist, t.title] = [t.title, t.artist]);
+    currentMatches = [];
+    renderTracks();
+    currentMatches = (await post("/api/match", {tracks: current.tracks})).matches;
+    renderTracks();
+  };
+  $("#copyBtn").onclick = () => {
+    const txt = current.tracks.map(t => `${t.time ? t.time + " " : ""}${t.artist} - ${t.title}`).join("\n");
+    navigator.clipboard.writeText(txt).then(() => toast("Tracklist copied"));
+  };
+}
+
+function trackLinks(t, i){
+  const q = encodeURIComponent(`${t.artist} ${t.title.replace(/\(.*?\)/g, "")}`.trim());
+  const s = current.set;
+  return `<a class="sp" href="https://open.spotify.com/search/${q}" target="_blank" rel="noopener">Spotify</a>
+    <a class="bp" href="https://www.beatport.com/search?q=${q}" target="_blank" rel="noopener">Beatport</a>
+    ${s.platform === "Youtube" && t.seconds != null ? `<a href="https://www.youtube.com/watch?v=${esc(s.id)}&t=${t.seconds}s" target="_blank" rel="noopener">In set</a>` : ""}
+    ${audioOn && t.seconds != null && t.title ? `<button class="ver" data-ver="${i}" title="Listen to the set and work out which remix or edit this is">Which version?</button>` : ""}`;
+}
+
+// ---------- which version ----------
+const vState = {};
+const vKey = i => current.set.id + ":" + i;
+
+async function findVersion(i){
+  const t = current.tracks[i], k = vKey(i);
+  if (vState[k] && vState[k].status === "running") return;
+  if (vState[k] && vState[k].status !== "running") { delete vState[k]; return renderTracks(); }  // toggle closed
+  vState[k] = {status: "running", phase: "Starting", done: 0, total: 0};
+  renderTracks();
+  try {
+    const {id} = await post("/api/versions/start", {url: current.set.url, set_id: current.set.id,
+      artist: t.artist, title: t.title, seconds: t.seconds, length: t.length, mashup: t.mashup});
+    while (vState[k] && vState[k].status === "running") {
+      await new Promise(r => setTimeout(r, 1200));
+      const j = await api("/api/versions/job?id=" + id);
+      if (!vState[k]) return;
+      vState[k] = j;
+      paintVersion(i);
+    }
+  } catch (e) { vState[k] = {status: "error", error: e.message}; paintVersion(i); }
+}
+
+function versionPanel(i){
+  const v = vState[vKey(i)]; if (!v) return "";
+  let body;
+  if (v.status === "running") {
+    const step = v.total ? ` · ${v.done} of ${v.total}` : v.phase === "Getting the set audio" && v.download ? ` · ${Math.round(v.download)}%` : "";
+    body = `<div class="vh">${esc(v.phase)}${step}</div><div class="prog"><i style="width:${v.total ? 30 + 70 * v.done / v.total : 30 * (v.download || 0) / 100}%"></i></div>
+      <div class="vd">Comparing the set against every remix, edit, and bootleg it can find online.</div>`;
+  } else if (v.status === "error") {
+    body = `<div class="vh unreleased">Could not check this one</div><div class="vd">${esc(v.error)}</div>`;
+  } else {
+    const d = v.verdict, max = Math.max(1, ...v.candidates.map(c => c.aligned));
+    body = `<div class="vh ${d.kind}">${esc(d.headline)}</div><div class="vd">${esc(d.detail)}${d.speed ? ` ${esc(d.speed)}.` : ""}</div>
+      ${v.candidates.map((c, n) => `<div class="vc ${c.family === v.candidates[0].family && ["match", "original", "close"].includes(d.kind) ? "top" : ""}">
+        <div class="vt">${esc(c.title)}<small>${esc(c.source)}${c.preview_only ? " preview" : ""}${c.coverage != null ? ` · lines up ${Math.round(c.coverage * 100)}%` : ""}</small></div>
+        <div class="vb"><i style="width:${100 * c.aligned / max}%"></i></div>
+        <div class="va"><a href="${esc(c.link)}" target="_blank" rel="noopener">Open</a>${n === 0 && d.kind !== "unreleased" ? `<button data-use="${i}">Use this</button>` : ""}</div>
+      </div>`).join("")}`;
+  }
+  return `<div class="vp" id="vp-${i}">${body}</div>`;
+}
+function paintVersion(i){ const el = $("#vp-" + i); if (el) el.outerHTML = versionPanel(i); else renderTracks(); }
+
+function useVersion(i){
+  const v = vState[vKey(i)], c = v.candidates[0], t = current.tracks[i];
+  // YouTube and SoundCloud titles often read "Artist - Title (Remix)", keep the title half
+  const parts = c.title.split(/\s+[-–]\s+/);
+  t.title = parts.length > 1 ? parts.slice(1).join(" - ") : c.title;
+  delete vState[vKey(i)];
+  renderTracks();
+  post("/api/match", {tracks: current.tracks}).then(m => { currentMatches = m.matches; renderTracks(); });
+  toast("Tracklist updated");
+}
+
+function renderTracks(){
+  const box = $("#tracks"); if (!box) return;
+  box.innerHTML = current.tracks.map((t, i) => {
+    const m = currentMatches[i];
+    const artistsHtml = t.is_id ? "Unreleased or unknown" : splitArtists(t.artist).map(a =>
+      `<button class="${isFollowed(a) ? "f" : ""}" data-follow="${esc(a)}" title="${isFollowed(a) ? "Following, click to unfollow" : "Follow"}">${esc(a)}${isFollowed(a) ? " ✓" : ""}</button>`).join(", ");
+    const ts = t.time ? (current.set.platform === "Youtube" ? `<a href="https://www.youtube.com/watch?v=${esc(current.set.id)}&t=${t.seconds}s" target="_blank" rel="noopener">${t.time}</a>` : t.time) : "";
+    return `<div class="tr ${t.is_id ? "id" : ""} ${t.source === "fingerprint" || t.source === "community" ? "conf-" + t.confidence : ""}" ${t.evidence ? `title="${esc(t.evidence)}"` : ""}>
+      <div class="n">${i + 1}</div>
+      <div class="tm">${ts}</div>
+      <button class="cov" data-play="${i}" ${m && m.preview ? "" : "disabled"} title="${m && m.preview ? "Play 30s preview" : "No preview"}">
+        ${m && m.cover ? `<img src="${esc(m.cover)}" alt="" loading="lazy">` : ""}${m && m.preview ? `<span class="pl">▶</span>` : ""}
+      </button>
+      <div style="min-width:0"><div class="ttl">${esc(t.title || "ID")}${(t.tags || []).map(g => `<span class="tag ${/unreleased|forthcoming/i.test(g) ? "un" : ""}">${esc(g)}</span>`).join("")}</div>
+        <div class="art">${artistsHtml}</div>${t.mashup ? `<div class="mash">mashed with ${esc(t.mashup)}</div>` : ""}</div>
+      <div class="links">${t.is_id ? "" : trackLinks(t, i)}</div>
+    </div>${versionPanel(i)}`;
+  }).join("");
+  box.onclick = e => {
+    const f = e.target.closest("[data-follow]"); if (f) return follow(f.dataset.follow);
+    const p = e.target.closest("[data-play]"); if (p && !p.disabled) return play(+p.dataset.play);
+    const v = e.target.closest("[data-ver]"); if (v) return findVersion(+v.dataset.ver);
+    const u = e.target.closest("[data-use]"); if (u) return useVersion(+u.dataset.use);
+  };
+  markPlaying();
+}
+
+function saveCurrent(){
+  const s = current.set;
+  if (crates.some(c => c.url === s.url)) { show("crates"); return; }
+  crates.unshift({url: s.url, title: s.title, thumbnail: s.thumbnail, uploader: s.uploader, count: current.tracks.length,
+    artists: [...new Set(current.tracks.filter(t => !t.is_id).flatMap(t => splitArtists(t.artist)))], savedAt: Date.now()});
+  store.set("crates", crates);
+  $("#saveCrate").textContent = "Saved to crates";
+  toast("Saved to crates");
+}
+
+// ---------- IDs named in the comments ----------
+// "13:40 ID???" with a reply "Miro (AR) - Watching Me", or a producer posting
+// "1:09:00 is my unreleased track": fill the tracklist's ID slots from those.
+async function askComments(){
+  const set = current;
+  if (set.answered) {   // the public site fills IDs inside the same request
+    const n = set.answered.filled;
+    if ($("#ansNote") && set.tracks.some(t => t.source === "community" || t.is_id))
+      $("#ansNote").textContent = n ? `Named ${n} ID${n > 1 ? "s" : ""} from the comments` : "Nobody has named the IDs in the comments yet";
+    return;
+  }
+  if (set.set.platform !== "Youtube" || !set.tracks.some(t => t.is_id && t.seconds != null)) return;
+  const note = () => $("#ansNote");
+  if (note()) note().textContent = "Checking the comments for your IDs...";
+  try {
+    const r = await post("/api/answers", {url: set.set.url, duration: set.set.duration,
+      tracks: set.tracks.map(t => ({seconds: t.seconds, is_id: t.is_id}))});
+    if (current !== set) return;   // user moved on to another set
+    let n = 0;
+    Object.entries(r.fills).forEach(([i, a]) => {
+      const t = set.tracks[+i]; if (!t || !t.is_id) return;
+      Object.assign(t, {artist: a.artist, title: a.title, is_id: false, source: "community", confidence: "community",
+        evidence: `${a.by_artist ? "Posted by the artist. " : ""}${a.evidence}`});
+      n++;
+    });
+    set.identified = set.tracks.filter(t => !t.is_id).length;
+    if (n) {
+      renderSet();
+      post("/api/match", {tracks: set.tracks}).then(m => { if (current === set) { currentMatches = m.matches; renderTracks(); } });
+    }
+    if (note()) note().textContent = n ? `Named ${n} ID${n > 1 ? "s" : ""} from the comments` : `Read ${r.comments_read} comments, nobody has named the IDs yet`;
+  } catch (e) { if (note()) note().textContent = ""; }
+}
+
+// ---------- fresh feed + charts (static files rebuilt by the GitHub Action) ----------
+let feed = null, charts = null, feedFilter = null;
+const ago = iso => {
+  const d = (Date.now() - new Date(iso)) / 864e5;
+  return d < 1 ? "today" : d < 2 ? "yesterday" : d < 30 ? `${Math.floor(d)} days ago` : new Date(iso).toLocaleDateString(undefined, {month: "short", day: "numeric"});
+};
+async function loadFeed(){
+  if (!feed) {
+    try { feed = await api("/data/feed.json"); }
+    catch { $("#freshOut").innerHTML = `<div class="empty"><b>No feed yet</b>It builds itself every few hours.</div>`; return; }
+  }
+  renderFeed();
+}
+function renderFeed(){
+  const chans = [...new Set(feed.sets.map(s => s.channel))];
+  $("#freshFilters").innerHTML = [null, ...chans].map(c => `<button class="chip ${feedFilter === c ? "on" : ""}" data-ch="${esc(c || "")}">${esc(c || "All")}</button>`).join("");
+  $("#freshFilters").onclick = e => { const b = e.target.closest("[data-ch]"); if (b) { feedFilter = b.dataset.ch || null; renderFeed(); } };
+  const sets = feed.sets.filter(s => !feedFilter || s.channel === feedFilter);
+  $("#freshSub").textContent = `New house sets from ${chans.length} channels, tracklisted automatically from descriptions, comments, and the IDs people name in the replies. Updated ${ago(feed.built)}.`;
+  $("#freshOut").innerHTML = `<div class="sets">${sets.map(s => `<button class="sc" data-set="${esc(s.id)}">
+      <img src="${esc(s.thumbnail || "")}" alt="" loading="lazy">
+      <div class="b"><div class="t">${esc(s.title)}</div>
+        <div class="m">${esc(s.channel)} · ${ago(s.published)} · ${esc(s.duration_ts || "")}</div>
+        <div class="m">${s.tracks ? `<span class="badge ok">${s.tracks - s.ids} tracks</span>${s.ids ? `<span class="badge warn">${s.ids} ID${s.ids > 1 ? "s" : ""}</span>` : ""}`
+          : `<span class="badge">Tracklist pending</span>`}</div></div></button>`).join("")}</div>`;
+  $("#freshOut").onclick = e => { const b = e.target.closest("[data-set]"); if (b) openBaked(b.dataset.set); };
+}
+async function openBaked(id, seconds){
+  show("identify");
+  renderSteps(0);
+  try {
+    const s = await api(`/data/sets/${encodeURIComponent(id)}.json`);
+    current = s; currentMatches = s.matches || [];
+    $("#setUrl").value = s.set.url;
+    renderSet();
+    if (!s.tracks.length) {   // a fresh set with nothing named yet: say when it was last checked
+      const box = $("#result .empty");
+      if (box) box.insertAdjacentHTML("afterbegin", `<p class="hint" style="margin-top:0">Last checked ${ago(s.checked_at)}. It gets re-read every 12 hours, so the tracklist appears here once someone posts it.</p>`);
+    }
+    if (seconds != null) toast(`ID at ${secToTs(seconds)}`);
+  } catch (e) { $("#result").innerHTML = `<div class="card err">${esc(e.message)}</div>`; }
+}
+const secToTs = s => { s = Math.floor(s); const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), x = String(s % 60).padStart(2, "0"); return h ? `${h}:${String(m).padStart(2, "0")}:${x}` : `${m}:${x}`; };
+
+async function loadCharts(){
+  if (!charts) {
+    try { charts = await api("/data/charts.json"); }
+    catch { $("#chartsOut").innerHTML = `<div class="empty"><b>No charts yet</b>They build themselves from the feed.</div>`; return; }
+  }
+  const c = charts;
+  $("#chartsSub").textContent = `Built from ${c.sets} tracklisted sets in the last ${c.days} days. Updated ${ago(c.built)}.`;
+  const tracks = c.tracks.length ? c.tracks.map((t, i) => `<div class="ch-row">
+      <div class="n">${i + 1}</div>
+      <button class="cov" data-cplay="${i}" ${t.preview ? "" : "disabled"}>${t.cover ? `<img src="${esc(t.cover)}" alt="">` : ""}${t.preview ? `<span class="pl">▶</span>` : ""}</button>
+      <div style="min-width:0"><div class="ttl">${esc(t.title)}</div><div class="art">${esc(t.artist)}</div>
+        <div class="in">in ${t.sets.map(s => `<button data-open="${esc(s.id)}">${esc(s.title.slice(0, 40))}</button>`).join(", ")}</div></div>
+      <div class="plays">${t.plays} sets</div></div>`).join("")
+    : `<div class="empty"><b>No repeats yet</b>A track shows up here once two different sets play it.</div>`;
+  const artists = c.artists.map(a => `<div class="art-row"><span>${esc(a.name)} <span class="hint">· ${a.plays} set${a.plays > 1 ? "s" : ""}</span></span>
+      <button class="btn sm ${isFollowed(a.name) ? "" : "ghost"}" data-cfol="${esc(a.name)}">${isFollowed(a.name) ? "Following" : "Follow"}</button></div>`).join("");
+  const ids = c.open_ids.slice(0, 15).map(x => `<div class="art-row"><span class="in" style="font-size:13px">${esc(x.set_title.slice(0, 48))}</span>
+      <button class="btn sm ghost" data-open="${esc(x.set)}" data-sec="${x.seconds ?? ""}">${esc(x.time || "ID")}</button></div>`).join("");
+  $("#chartsOut").innerHTML = `<div class="ch-grid"><div><h2>Most-played tracks</h2>${tracks}</div>
+    <div><h2>Most-supported artists</h2><p class="hint" style="margin-top:-6px">Played by other DJs, once per set</p>${artists}
+    ${ids ? `<h2>IDs nobody has named</h2>${ids}` : ""}</div></div>`;
+  $("#chartsOut").onclick = e => {
+    const o = e.target.closest("[data-open]"); if (o) return openBaked(o.dataset.open, o.dataset.sec ? +o.dataset.sec : null);
+    const f = e.target.closest("[data-cfol]"); if (f) { follow(f.dataset.cfol); return loadCharts(); }
+    const p = e.target.closest("[data-cplay]");
+    if (p && !p.disabled) { const t = c.tracks[+p.dataset.cplay]; playingIdx = null; audio.src = t.preview; audio.play(); $("#pImg").src = t.cover || ""; $("#pTx").textContent = `${t.title} · ${t.artist}`; $("#player").classList.add("on"); }
+  };
+}
+
+// ---------- fingerprinting ----------
+let fpJob = null;
+async function fpPanel(mode){
+  const box = $("#fp"); if (!box) return;
+  const s = current.set;
+  if (!fpProvider) {
+    box.innerHTML = `<div class="card fp keybox"><b>Identify it from the audio</b>
+      <p class="sub" style="margin:6px 0 0">Afterhours can listen to the set itself and recognize each song, like Shazam running through the whole mix. It needs a recognition key in <code>afterhours/config.json</code>:</p>
+      <ol><li>AudD: <code>{"audd_token": "..."}</code> from <a href="https://dashboard.audd.io" target="_blank" rel="noopener">dashboard.audd.io</a></li>
+      <li>or ACRCloud: <code>{"acr_host": "...", "acr_key": "...", "acr_secret": "..."}</code> from <a href="https://console.acrcloud.com" target="_blank" rel="noopener">console.acrcloud.com</a></li></ol>
+      <p class="stat">Restart the server after adding it.</p></div>`;
+    return;
+  }
+  const est = async iv => (await post("/api/fingerprint/estimate", {duration: s.duration, mode, interval: iv, tracks: current.tracks})).lookups;
+  const head = mode === "fill" ? `Fingerprint the ${idSlots()} ID${idSlots() > 1 ? "s" : ""}` : "Identify it from the audio";
+  const blurb = mode === "fill" ? "Listens to just the unknown slots of this tracklist." : "Listens through the whole set and recognizes each song. Unreleased IDs will still come back unknown.";
+  box.innerHTML = `<div class="card fp"><b>${head}</b><div class="stat" style="margin-top:4px">${blurb}</div>
+    <div class="row">
+      ${mode === "scan" ? `<label class="stat">Listen every <select id="fpIv"><option value="45">45s (most thorough)</option><option value="60" selected>60s</option><option value="90">90s (cheapest)</option></select></label>` : ""}
+      <span class="stat" id="fpEst"></span><span class="sp" style="flex:1"></span>
+      <button class="btn sm" id="fpGo">Start</button>
+    </div></div>`;
+  const iv = () => +($("#fpIv")?.value || 60);
+  const showEst = async () => { $("#fpEst").textContent = `About ${await est(iv())} lookups with ${fpProvider}`; };
+  showEst(); if ($("#fpIv")) $("#fpIv").onchange = showEst;
+  $("#fpGo").onclick = () => fpRun(mode, iv());
+}
+
+async function fpRun(mode, interval){
+  const s = current.set, box = $("#fp");
+  let id;
+  try {
+    id = (await post("/api/fingerprint/start", {url: s.url, set_id: s.id, duration: s.duration, mode, interval, tracks: current.tracks})).id;
+  } catch (e) { box.innerHTML = `<div class="card err">${esc(e.message)}</div>`; return; }
+  fpJob = id;
+  box.innerHTML = `<div class="card fp"><b id="fpPhase">Starting</b><div class="prog"><i id="fpBar"></i></div>
+    <div class="row" style="margin-top:0"><span class="stat" id="fpStat"></span><span style="flex:1"></span><button class="btn sm ghost" id="fpStop">Stop</button></div></div>`;
+  $("#fpStop").onclick = () => post("/api/fingerprint/cancel", {id});
+  let shown = 0;
+  while (fpJob === id) {
+    await new Promise(r => setTimeout(r, 1500));
+    let j; try { j = await api("/api/fingerprint/job?id=" + id); } catch { continue; }
+    if (!$("#fpPhase")) return;  // user moved on to another set
+    const pct = j.total ? 20 + 80 * j.done / j.total : 20 * j.download / 100;
+    $("#fpBar").style.width = pct + "%";
+    $("#fpPhase").textContent = j.phase;
+    $("#fpStat").textContent = j.total ? `${j.done} of ${j.total} samples · ${j.hits} recognized` : `Download ${Math.round(j.download)}%`;
+    if (mode === "scan" && j.tracks.length && j.tracks.length !== shown) {
+      shown = j.tracks.length;
+      fpShowScan(j.tracks);
+    }
+    if (j.status === "running") continue;
+    fpJob = null;
+    if (j.status === "error") { $("#fp").innerHTML = `<div class="card err">Fingerprinting stopped. ${esc(j.error)}</div>`; return; }
+    if (mode === "fill") fpApplyFill(j.filled || {});
+    else fpShowScan(j.tracks, true);
+    return;
+  }
+}
+
+function fpShowScan(tracks, final){
+  current.tracks = tracks;
+  current.source = "fingerprint";
+  current.identified = tracks.filter(t => !t.is_id).length;
+  if (!$("#tracks")) {   // first results: swap the empty state for a track list, keep the progress card
+    const fp = $("#fp");
+    renderSet();
+    $("#fp").replaceWith(fp);
+  } else renderTracks();
+  if (final) {
+    $("#fp").innerHTML = "";
+    renderSet();
+    post("/api/match", {tracks: current.tracks}).then(m => { currentMatches = m.matches; renderTracks(); });
+    toast(`Identified ${current.identified} tracks from the audio`);
+  }
+}
+
+function fpApplyFill(filled){
+  let n = 0;
+  Object.entries(filled).forEach(([slot, hit]) => {
+    const t = current.tracks[+slot]; if (!t) return;
+    Object.assign(t, {artist: hit.artist, title: hit.title, is_id: false, source: "fingerprint", confidence: "filled"});
+    n++;
+  });
+  current.identified = current.tracks.filter(t => !t.is_id).length;
+  renderSet();
+  post("/api/match", {tracks: current.tracks}).then(m => { currentMatches = m.matches; renderTracks(); });
+  toast(n ? `Filled ${n} IDs from the audio` : "No matches, those IDs are likely unreleased");
+}
+
+// ---------- preview player ----------
+const audio = $("#audio"); let playingIdx = null;
+function play(i){
+  const m = currentMatches[i], t = current.tracks[i];
+  if (playingIdx === i && !audio.paused) { stop(); return; }
+  audio.src = m.preview; audio.play();
+  playingIdx = i;
+  $("#pImg").src = m.cover || ""; $("#pTx").textContent = `${t.title} · ${t.artist}`;
+  $("#player").classList.add("on"); markPlaying();
+}
+function stop(){ audio.pause(); playingIdx = null; $("#player").classList.remove("on"); markPlaying(); }
+function markPlaying(){ document.querySelectorAll(".cov").forEach(c => c.classList.toggle("playing", +c.dataset.play === playingIdx)); }
+audio.ontimeupdate = () => { $("#pBar").style.width = (audio.currentTime / (audio.duration || 30) * 100) + "%"; };
+audio.onended = () => {
+  if (playingIdx == null || !current) return stop();   // a chart preview, nothing to roll into
+  // roll into the next track that has a preview
+  for (let j = playingIdx + 1; j < current.tracks.length; j++) if (currentMatches[j] && currentMatches[j].preview) return play(j);
+  stop();
+};
+$("#pStop").onclick = stop;
+
+// ---------- SHOWS ----------
+let eventsCache = null, filterMine = false, filterFest = false;
+function setLoc(l){ loc = l; store.set("loc", l); $("#locLabel").textContent = l.name; $("#geoResults").innerHTML = ""; loadEvents(); }
+$("#cityBtn").onclick = async () => {
+  const q = $("#cityIn").value.trim(); if (!q) return;
+  const res = await api("/api/geocode?q=" + encodeURIComponent(q));
+  if (!res.length) { $("#geoResults").innerHTML = `<span class="hint">No match for that city.</span>`; return; }
+  if (res.length === 1) return setLoc({name: `${res[0].name}, ${res[0].region || res[0].country}`, lat: res[0].lat, lon: res[0].lon});
+  $("#geoResults").innerHTML = res.map((r, i) => `<button class="chip" data-g="${i}">${esc(r.name)}, ${esc(r.region || "")} ${esc(r.country)}</button>`).join("");
+  $("#geoResults").onclick = e => { const b = e.target.closest("[data-g]"); if (b) { const r = res[+b.dataset.g]; setLoc({name: `${r.name}, ${r.region || r.country}`, lat: r.lat, lon: r.lon}); } };
+};
+$("#cityIn").onkeydown = e => { if (e.key === "Enter") $("#cityBtn").click(); };
+$("#geoBtn").onclick = () => {
+  if (!navigator.geolocation) return toast("Location not available in this browser");
+  navigator.geolocation.getCurrentPosition(p => setLoc({name: "Near you", lat: p.coords.latitude, lon: p.coords.longitude}),
+    () => toast("Location permission denied, search a city instead"));
+};
+$("#radius").onchange = () => loc && loadEvents();
+$("#onlyMine").onclick = e => { filterMine = !filterMine; e.target.classList.toggle("on", filterMine); renderEvents(); };
+$("#onlyFest").onclick = e => { filterFest = !filterFest; e.target.classList.toggle("on", filterFest); renderEvents(); };
+
+async function loadEvents(){
+  if (!loc) return;
+  $("#locLabel").textContent = loc.name;
+  $("#eventsOut").innerHTML = `<div class="steps"><div class="step on"><span class="dot"></span>Finding shows around ${esc(loc.name)}</div></div>`;
+  try {
+    eventsCache = await api(`/api/events?lat=${loc.lat}&lon=${loc.lon}&radius=${$("#radius").value}&days=90`);
+    renderEvents();
+  } catch (e) { $("#eventsOut").innerHTML = `<div class="card err">${esc(e.message)}</div>`; }
+}
+
+function renderEvents(){
+  const out = $("#eventsOut"); if (!eventsCache) return;
+  if (eventsCache.needs_key) {
+    out.innerHTML = `<div class="card keybox" style="margin-top:14px"><b>Connect a show source</b>
+      <p class="sub" style="margin:6px 0 0">Afterhours pulls live event listings from EDMTrain and Ticketmaster. Both have free API keys.</p>
+      <ol>
+        <li>EDMTrain (best for house and dance): request a key at <a href="https://edmtrain.com/api-documentation" target="_blank" rel="noopener">edmtrain.com/api-documentation</a></li>
+        <li>Ticketmaster (wider coverage): get a Consumer Key at <a href="https://developer.ticketmaster.com/" target="_blank" rel="noopener">developer.ticketmaster.com</a></li>
+        <li>Put them in <code>afterhours/config.json</code> as <code>{"edmtrain_key": "...", "ticketmaster_key": "..."}</code> and reload</li>
+      </ol></div>`;
+    return;
+  }
+  let evs = eventsCache.events.map(e => ({...e, mine: e.artists.filter(isFollowed)}));
+  if (filterMine) evs = evs.filter(e => e.mine.length);
+  if (filterFest) evs = evs.filter(e => e.festival);
+  evs.sort((a, b) => (b.mine.length > 0) - (a.mine.length > 0) || (a.date || "").localeCompare(b.date || ""));
+  const hot = evs.filter(e => e.mine.length), rest = evs.filter(e => !e.mine.length);
+  const row = e => {
+    const d = new Date(e.date + "T12:00:00");
+    const lineup = e.artists.slice(0, 8).map(a => isFollowed(a) ? `<b>${esc(a)}</b>` : esc(a)).join(", ") + (e.artists.length > 8 ? ` +${e.artists.length - 8}` : "");
+    return `<div class="ev ${e.mine.length ? "hot" : ""}">
+      <div class="date"><div class="w">${d.toLocaleDateString(undefined, {month: "short"})}</div><div class="d">${d.getDate()}</div><div class="w">${d.toLocaleDateString(undefined, {weekday: "short"})}</div></div>
+      <div style="min-width:0"><div class="nm">${esc(e.name)}${e.festival ? ` <span class="badge">Festival</span>` : ""}</div>
+        <div class="lineup">${lineup}</div>
+        <div class="vn">${esc(e.venue || "")}${e.city ? " · " + esc(e.city) : ""}${e.time ? " · " + esc(e.time.slice(0, 5)) : ""} · via ${esc(e.source)}</div></div>
+      ${e.link ? `<a class="btn sm ghost go" href="${esc(e.link)}" target="_blank" rel="noopener">Tickets</a>` : ""}
+    </div>`;
+  };
+  let html = eventsCache.errors.map(er => `<div class="card err">${esc(er)}</div>`).join("");
+  if (hot.length) html += `<div class="month" style="color:var(--accent)">Your artists</div>` + hot.map(row).join("");
+  let lastM = "";
+  rest.forEach(e => {
+    const m = new Date(e.date + "T12:00:00").toLocaleDateString(undefined, {month: "long", year: "numeric"});
+    if (m !== lastM) { html += `<div class="month">${m}</div>`; lastM = m; }
+    html += row(e);
+  });
+  if (!evs.length) html += `<div class="empty"><b>Nothing here yet</b>${filterMine ? "None of your artists are playing nearby. Try a wider radius." : "Try a wider radius or another city."}</div>`;
+  out.innerHTML = html;
+}
+
+// ---------- ARTISTS ----------
+$("#addArtistForm").onsubmit = e => { e.preventDefault(); const n = $("#artistIn").value.trim(); if (n && !isFollowed(n)) follow(n); $("#artistIn").value = ""; setTimeout(renderArtists, 50); };
+function renderArtists(){
+  const upcoming = n => eventsCache && !eventsCache.needs_key ? eventsCache.events.filter(e => e.artists.some(a => norm(a) === norm(n))).length : null;
+  const card = (a, sugg) => {
+    const u = upcoming(a.name);
+    return `<div class="ac ${sugg ? "sugg" : ""}">
+      ${sugg ? "" : `<button class="x" data-unf="${esc(a.name)}" title="Unfollow">×</button>`}
+      ${a.picture ? `<img src="${esc(a.picture)}" alt="">` : `<div class="ph">${esc(a.name[0] || "?")}</div>`}
+      <div class="nm">${esc(a.name)}</div>
+      <div class="sm">${sugg ? `In ${a.n} of your sets` : u == null ? (eventsCache ? "Shows not connected yet" : "Set a location to see shows") : u ? `${u} show${u > 1 ? "s" : ""} nearby` : "No shows nearby"}</div>
+      ${sugg ? `<button class="btn sm" style="margin-top:8px" data-fol="${esc(a.name)}">Follow</button>` : ""}
+    </div>`;
+  };
+  const counts = {};
+  crates.forEach(c => (c.artists || []).forEach(a => { if (!isFollowed(a)) counts[a] = (counts[a] || 0) + 1; }));
+  const sugg = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 12).map(([name, n]) => ({name, n}));
+  let html = followed.length ? `<h2>Following</h2><div class="grid">${followed.map(a => card(a)).join("")}</div>`
+    : `<div class="empty"><b>No artists yet</b>Identify a set and tap any artist name to follow them.</div>`;
+  if (sugg.length) html += `<h2>From your crates</h2><div class="grid">${sugg.map(a => card(a, true)).join("")}</div>`;
+  $("#artistsOut").innerHTML = html;
+  $("#artistsOut").onclick = e => {
+    const u = e.target.closest("[data-unf]"), f = e.target.closest("[data-fol]");
+    if (u) { follow(u.dataset.unf); renderArtists(); }
+    if (f) { follow(f.dataset.fol); renderArtists(); }
+  };
+}
+
+// ---------- CRATES ----------
+function renderCrates(){
+  $("#cratesOut").innerHTML = crates.length ? crates.map((c, i) => `<div class="crate" data-c="${i}">
+      ${c.thumbnail ? `<img src="${esc(c.thumbnail)}" alt="">` : ""}
+      <div style="min-width:0;flex:1"><div class="ttl">${esc(c.title)}</div><div class="art">${esc(c.uploader || "")} · ${c.count} tracks</div></div>
+      <button class="btn sm ghost" data-del="${i}">Remove</button></div>`).join("")
+    : `<div class="empty"><b>Your crates are empty</b>Save a set after identifying it and it lands here.</div>`;
+  $("#cratesOut").onclick = e => {
+    const d = e.target.closest("[data-del]");
+    if (d) { crates.splice(+d.dataset.del, 1); store.set("crates", crates); return renderCrates(); }
+    const c = e.target.closest("[data-c]");
+    if (c) { const url = crates[+c.dataset.c].url; $("#setUrl").value = url; show("identify"); identify(url); }
+  };
+}
+
+// ---------- boot ----------
+saveFollowed();
+if (loc) $("#locLabel").textContent = loc.name;
+show(store.get("tab", "fresh"));
+</script>
+</body>
+</html>

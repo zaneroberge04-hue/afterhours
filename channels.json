@@ -1,0 +1,16 @@
+{
+  "_note": "Channels the feed follows. id is the YouTube channel id (UC...). Add or remove freely.",
+  "channels": [
+    {"name": "Boiler Room", "id": "UCGBpxWJr9FNOcFYA5GkKrMg"},
+    {"name": "Cercle", "id": "UCPKT_csvP72boVX0XrMtagQ"},
+    {"name": "HÖR BERLIN", "id": "UCmfF7JZv26UUKyRedViGIlw"},
+    {"name": "Elevator Music", "id": "UCSN7R7sDkoXfrx8gRdITr0Q"},
+    {"name": "Defected Records", "id": "UCnOxaDXBiBXg9Nn9hKWu6aw"},
+    {"name": "Glitterbox", "id": "UCyBggvUMg-gM1XCSKT1wbQQ"},
+    {"name": "Keinemusik", "id": "UCYzx8QoAiRb69fEgyBInAug"},
+    {"name": "RAW CUTS", "id": "UCwatAPhCuO0UwCZUaqEzzRQ"},
+    {"name": "Mixmag", "id": "UCQdCIrTpkhEH5Z8KPsn7NvQ"},
+    {"name": "DJ Mag", "id": "UCJEKlziKdxoos1qbptjGgLg"},
+    {"name": "1001Tracklists", "id": "UCBIfsPaQviN1LpnkWQvAGMQ"}
+  ]
+}

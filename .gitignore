@@ -1,0 +1,8 @@
+.venv/
+cache/
+config.json
+__pycache__/
+tests/fixtures/
+node_modules/
+.wrangler/
+.dev.vars
