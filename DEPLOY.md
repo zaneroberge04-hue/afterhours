@@ -7,7 +7,7 @@ Cloudflare redeploys on every push. Visitors cost nothing, and nothing downloads
 | Piece | Where it runs | What it does |
 |---|---|---|
 | `site/` | Cloudflare Pages (static) | The page, plus the baked feed in `site/data/` |
-| `functions/api/` | Cloudflare Pages Functions | Paste-a-link lookups, Deezer matches, artist pictures |
+| `functions/api/` | Pages Functions, or `worker.js` on a Worker project | Paste-a-link lookups, Deezer matches, artist pictures |
 | `build_feed.py` | GitHub Actions, every 6 hours | Reads new sets from `channels.json`, re-reads recent ones for new IDs |
 
 The local app (`server.py`, version finder, audio scan) is unchanged and never deployed.

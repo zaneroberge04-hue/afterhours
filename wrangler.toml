@@ -1,0 +1,9 @@
+# Used when the project is a Cloudflare Worker with static assets (Workers Builds runs
+# `npx wrangler deploy`). A Pages project ignores this file and uses functions/ directly.
+name = "afterhours"
+main = "worker.js"
+compatibility_date = "2026-11-01"
+
+[assets]
+directory = "./site"
+binding = "ASSETS"
